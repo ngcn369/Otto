@@ -29,8 +29,6 @@
     }
     @keyframes bgPulse { from { opacity:.6; } to { opacity:1; } }
 
-    #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-
     .screen {
       display: none; flex-direction: column;
       align-items: center; justify-content: center;
@@ -181,9 +179,6 @@
 </head>
 <body>
 
-<canvas id="confetti-canvas"></canvas>
-
-<!-- SCREEN 1: YOU WON -->
 <div class="screen active" id="screen-1">
   <div class="trophy">🏆</div>
   <h1>YOU WON!</h1>
@@ -200,7 +195,6 @@
   <p class="fine-print">By clicking claim, you agree to our Terms & Conditions. This offer is non-transferable and subject to verification. Void where prohibited by law.</p>
 </div>
 
-<!-- SCREEN 2: FAKE LOADING -->
 <div class="screen" id="screen-2">
   <div class="loading-icon">⚙️</div>
   <div class="loading-title">Verifying Winner…</div>
@@ -216,7 +210,6 @@
   </div>
 </div>
 
-<!-- SCREEN 3: FAKE FORM -->
 <div class="screen" id="screen-3">
   <div class="form-wrap">
     <div class="form-title">🎉 Winner Confirmed!</div>
@@ -232,7 +225,6 @@
   </div>
 </div>
 
-<!-- SCREEN 4: PRANK REVEAL -->
 <div class="screen" id="screen-4">
   <div class="reveal-emoji">😂</div>
   <div class="reveal-title">GOT YOU!</div>
@@ -249,35 +241,6 @@
 </div>
 
 <script>
-// CONFETTI
-const canvas = document.getElementById('confetti-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
-const COLORS = ['#FFE234','#FF3CAC','#2BD9FE','#39FF14','#FF6B00','#fff'];
-const pieces = Array.from({length: 120}, () => ({
-  x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
-  r: Math.random() * 7 + 3, d: Math.random() * 120 + 60,
-  color: COLORS[Math.floor(Math.random() * COLORS.length)],
-  tilt: 0, tiltAngle: 0, tiltAngleInc: Math.random() * 0.07 + 0.05,
-  shape: Math.random() > 0.5 ? 'rect' : 'circle',
-}));
-function drawConfetti() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  pieces.forEach(p => {
-    p.tiltAngle += p.tiltAngleInc;
-    p.y += Math.cos(p.d) + 1.2; p.x += Math.sin(p.tiltAngle) * 1.5;
-    p.tilt = Math.sin(p.tiltAngle - p.d/2) * 12;
-    if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
-    ctx.beginPath(); ctx.fillStyle = p.color;
-    if (p.shape === 'circle') { ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); }
-    else { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.tilt * Math.PI/180); ctx.fillRect(-p.r, -p.r*2, p.r*2, p.r*2); ctx.restore(); }
-    ctx.fill();
-  });
-  requestAnimationFrame(drawConfetti);
-}
-drawConfetti();
-
 // COUNTDOWN
 let secs = 9*60+59;
 const cdEl = document.getElementById('countdown');
@@ -316,7 +279,6 @@ function goReveal() {
   const name = document.getElementById('victim-name').value.trim() || 'Friend';
   document.getElementById('reveal-name').textContent = name;
   goScreen(4);
-  pieces.forEach(p => { p.y = Math.random() * -200; });
 }
 
 // SHARE
