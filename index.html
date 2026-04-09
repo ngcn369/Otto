@@ -3,204 +3,396 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>System Alert | Cloud Infrastructure</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <title>Billing Management Console</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0d1117; --surface: #161b22; --border: #30363d;
-      --text-main: #c9d1d9; --text-muted: #8b949e;
-      --red: #f85149; --green: #3fb950; --blue: #58a6ff; --warning: #d29922;
-    }
+    /* Reset & Typography */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0f111a;
+      color: #e2e8f0;
+      font-size: 14px;
+      overflow-x: hidden;
     }
+    a { color: #3b82f6; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    ul { list-style: none; }
+
+    /* Layout */
+    #app { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
     
-    /* Grid Background */
-    body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none;
-      background-image: linear-gradient(var(--border) 1px, transparent 1px),
-                        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 40px 40px; opacity: 0.1; z-index: 0;
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background-color: #1a1d27;
+      border-right: 1px solid #2d3748;
+      display: flex;
+      flex-direction: column;
     }
-
-    .screen {
-      display: none; flex-direction: column;
-      width: 100%; max-width: 480px;
-      padding: 32px; position: relative; z-index: 10;
-      animation: fadeIn 0.3s ease-out forwards;
+    .brand {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      font-weight: 600;
+      font-size: 16px;
+      border-bottom: 1px solid #2d3748;
+      letter-spacing: 0.5px;
+      color: #cbd5e1;
     }
-    .screen.active { display: flex; }
-    @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+    .nav-list { padding: 15px 0; }
+    .nav-item {
+      padding: 10px 20px;
+      color: #94a3b8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-item:hover, .nav-item.active { background-color: #2d3748; color: #fff; }
+    
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      background-color: #0f111a;
+    }
+    .header {
+      height: 60px;
+      border-bottom: 1px solid #2d3748;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      background-color: #1a1d27;
+    }
+    .user-profile { font-size: 13px; color: #94a3b8; display: flex; gap: 15px; }
 
+    /* Dashboard Container */
+    .container { padding: 30px; max-width: 1200px; margin: 0 auto; width: 100%; }
+    .page-title { font-size: 24px; font-weight: 600; margin-bottom: 5px; color: #f8fafc; }
+    .page-subtitle { color: #64748b; margin-bottom: 25px; }
+
+    /* Alert Banner */
+    .alert-banner {
+      background-color: rgba(239, 68, 68, 0.1);
+      border-left: 4px solid #ef4444;
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .alert-text { color: #fca5a5; font-weight: 500; }
+    .alert-subtext { color: #f87171; font-size: 13px; margin-top: 4px; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #2d3748;
+      margin-bottom: 20px;
+    }
+    .tab {
+      padding: 10px 20px;
+      color: #94a3b8;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .tab:hover { color: #cbd5e1; }
+    .tab.active { color: #3b82f6; border-bottom-color: #3b82f6; font-weight: 500; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Cards & Data */
     .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; padding: 32px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      background-color: #1a1d27;
+      border: 1px solid #2d3748;
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 20px;
     }
+    .cost-value { font-size: 42px; font-weight: 300; color: #ef4444; margin: 10px 0; }
+    .cost-label { color: #94a3b8; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
 
-    /* Typography */
-    h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: var(--red); display: flex; align-items: center; gap: 10px; }
-    .subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
-    code { font-family: 'Fira Code', monospace; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 13px; color: var(--blue); }
-
-    /* Alert Box */
-    .billing-alert {
-      background: rgba(248, 81, 73, 0.1); border-left: 4px solid var(--red);
-      padding: 16px; margin-bottom: 24px; border-radius: 0 4px 4px 0;
+    /* Data Table */
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .data-table th, .data-table td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #2d3748;
     }
-    .billing-alert .amount { font-family: 'Fira Code', monospace; font-size: 32px; font-weight: 700; color: var(--red); margin: 8px 0; }
-    .billing-alert p { font-size: 13px; color: var(--text-main); }
+    .data-table th { color: #64748b; font-weight: 500; font-size: 12px; text-transform: uppercase; }
+    .data-table tr:hover td { background-color: rgba(255,255,255,0.02); }
+    .code-font { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; }
 
     /* Buttons */
     .btn {
-      width: 100%; background: var(--surface); border: 1px solid var(--border);
-      color: var(--text-main); font-family: 'Inter', sans-serif;
-      font-size: 14px; font-weight: 600; padding: 12px 16px; border-radius: 6px;
-      cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
     }
-    .btn-danger { background: var(--red); color: #fff; border-color: var(--red); }
-    .btn-danger:hover { background: #d13b34; }
-    .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
+    .btn-primary { background-color: #3b82f6; color: #fff; }
+    .btn-primary:hover { background-color: #2563eb; }
+    .btn-danger { background-color: #ef4444; color: #fff; }
+    .btn-danger:hover { background-color: #dc2626; }
+    .btn-outline { background-color: transparent; border-color: #475569; color: #e2e8f0; }
+    .btn-outline:hover { background-color: #334155; }
 
-    /* Terminal Screen */
-    .terminal {
-      background: #000; border: 1px solid var(--border); border-radius: 6px;
-      padding: 16px; font-family: 'Fira Code', monospace; font-size: 12px;
-      color: var(--green); height: 200px; overflow-y: auto; text-align: left;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
     }
-    .terminal p { margin-bottom: 6px; opacity: 0; animation: blinkIn 0.1s forwards; }
-    .terminal .warn { color: var(--warning); }
-    .terminal .err { color: var(--red); }
-    @keyframes blinkIn { to { opacity: 1; } }
-
-    /* Form */
-    .field { margin-bottom: 16px; text-align: left; }
-    .field label { font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .field input {
-      width: 100%; background: #000; border: 1px solid var(--border);
-      border-radius: 6px; color: var(--text-main); font-family: 'Fira Code', monospace;
-      font-size: 14px; padding: 10px 12px; outline: none; transition: border-color 0.2s;
+    .modal {
+      background-color: #1a1d27;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5), 0 10px 10px -5px rgba(0,0,0,0.3);
     }
-    .field input:focus { border-color: var(--blue); }
+    .modal-header { border-bottom: 1px solid #2d3748; padding-bottom: 15px; margin-bottom: 20px; }
+    .modal-title { font-size: 18px; font-weight: 600; color: #f8fafc; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 8px; }
+    .form-group input {
+      width: 100%;
+      background-color: #0f111a;
+      border: 1px solid #475569;
+      color: #f8fafc;
+      padding: 10px 12px;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+    }
+    .form-group input:focus { border-color: #3b82f6; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
 
-    /* Reveal */
-    .reveal-emoji { font-size: 64px; margin-bottom: 16px; text-align: center; }
-    .success-title { color: var(--green); text-align: center; margin-bottom: 16px; }
+    /* Video Container (Hidden until Prank) */
+    #video-container {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 9999;
+      display: none;
+    }
+    #video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   </style>
 </head>
 <body>
 
-<div class="screen active" id="screen-1">
-  <div class="card">
-    <h1><span style="font-size: 20px;">⚠️</span> Action Required</h1>
-    <p class="subtitle">Anomalous outbound traffic detected on instance <code>prod-db-cluster-01</code>. Your free-tier limits have been exceeded.</p>
-    
-    <div class="billing-alert">
-      <p>Pending Overage Charges:</p>
-      <div class="amount">$8,409.32</div>
-      <p style="color: var(--text-muted);">Billing cycle ends in 02:14:59</p>
-    </div>
+  <div id="app">
+    <nav class="sidebar">
+      <div class="brand">Cloud Console</div>
+      <ul class="nav-list">
+        <li class="nav-item">Dashboard</li>
+        <li class="nav-item active">Billing & Cost Management</li>
+        <li class="nav-item">Cost Explorer</li>
+        <li class="nav-item">Budgets & Alerts</li>
+        <li class="nav-item">Invoices</li>
+        <li class="nav-item">Payment Methods</li>
+      </ul>
+    </nav>
 
-    <button class="btn btn-danger" onclick="goScreen(2)">Authenticate & Review Logs</button>
-  </div>
-</div>
+    <main class="main-content">
+      <header class="header">
+        <div style="color: #94a3b8; font-size: 13px;">Region: <span style="color:#e2e8f0;">us-east-1 (N. Virginia)</span></div>
+        <div class="user-profile">
+          <span>root-admin</span>
+          <span>Account ID: 4892-1109-8433</span>
+        </div>
+      </header>
 
-<div class="screen" id="screen-2">
-  <div class="card" style="padding: 16px;">
-    <div class="terminal" id="terminal-output">
+      <div class="container">
+        <h1 class="page-title">Cost Management</h1>
+        <p class="page-subtitle">Billing cycle: Oct 1, 2026 - Oct 31, 2026</p>
+
+        <div class="alert-banner">
+          <div>
+            <div class="alert-text">CRITICAL: Budget threshold exceeded.</div>
+            <div class="alert-subtext">Unusual data egress patterns detected across 14 distinct instances. Automated shutdown protocol failed.</div>
+          </div>
+          <button class="btn btn-danger" onclick="openModal()">Halt Instances & Dispute</button>
+        </div>
+
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab('summary', this)">Summary</div>
+          <div class="tab" onclick="switchTab('breakdown', this)">Service Breakdown</div>
+          <div class="tab" onclick="switchTab('logs', this)">Audit Logs</div>
+        </div>
+
+        <div id="summary" class="tab-content active">
+          <div class="card">
+            <div class="cost-label">Current Month Estimated Costs</div>
+            <div class="cost-value">$ 48,209.14</div>
+            <p style="color: #94a3b8; font-size: 13px;">Projected month-end cost: $ 81,400.00 (+14,204% vs last month)</p>
+          </div>
+          
+          <div class="card">
+            <h3 style="margin-bottom: 15px; font-weight: 500;">Top Cost Drivers</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Region</th>
+                  <th>Usage Type</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Data Transfer</td>
+                  <td>us-east-1</td>
+                  <td class="code-font">DataEgress-Bytes-Out</td>
+                  <td style="color: #ef4444; font-weight: 500;">$ 41,092.80</td>
+                </tr>
+                <tr>
+                  <td>Elastic Compute (EC2)</td>
+                  <td>us-east-1</td>
+                  <td class="code-font">BoxUsage:p4d.24xlarge</td>
+                  <td>$ 6,804.34</td>
+                </tr>
+                <tr>
+                  <td>Relational Database</td>
+                  <td>eu-central-1</td>
+                  <td class="code-font">Multi-AZ-Storage</td>
+                  <td>$ 312.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="breakdown" class="tab-content">
+          <div class="card">
+            <h3 style="margin-bottom: 15px; font-weight: 500;">Instance Allocation</h3>
+            <p style="color:#94a3b8; line-height: 1.6; margin-bottom: 15px;">
+              System analysis indicates 8 unauthorized `p4d.24xlarge` instances were provisioned via IAM role `arn:aws:iam::489211098433:role/jenkins-deployer`. Traffic is being routed to external IP block 185.150.x.x.
+            </p>
+            <button class="btn btn-outline" onclick="openModal()">Review Security Group Rules</button>
+          </div>
+        </div>
+
+        <div id="logs" class="tab-content">
+          <div class="card" style="font-family: monospace; font-size: 12px; background: #0a0c10; color: #a5b4fc; line-height: 1.5;">
+            <div>[WARN] 08:12:04 - Authentication bypass detected on API gateway.</div>
+            <div>[INFO] 08:12:15 - Provisioning EC2 cluster (gpu-optimized).</div>
+            <div>[INFO] 08:15:00 - Data export job initiated. Destination: external.</div>
+            <div style="color: #ef4444;">[ERR] 08:45:12 - Billing alert triggered. API restrictions applied.</div>
+            <div style="color: #ef4444;">[ERR] 08:45:15 - Failed to terminate instance id-0af88219c.</div>
+          </div>
+        </div>
+
       </div>
+    </main>
   </div>
-</div>
 
-<div class="screen" id="screen-3">
-  <div class="card">
-    <h1 style="color: var(--text-main); font-size: 20px;">Identity Verification</h1>
-    <p class="subtitle">Please verify your developer alias to access the isolated environment logs.</p>
-    
-    <div class="field">
-      <label>Developer Alias / Handle</label>
-      <input type="text" id="victim-name" placeholder="e.g. root, admin, neo" autocomplete="off"/>
+  <div class="modal-overlay" id="dispute-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Elevated Privileges Required</h2>
+      </div>
+      <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px; line-height: 1.5;">
+        To halt active instances and formally dispute the accrued charges, you must re-authenticate with Root or Administrator credentials.
+      </p>
+      
+      <div class="form-group">
+        <label>IAM Username</label>
+        <input type="text" value="root-admin" disabled style="opacity: 0.7; cursor: not-allowed;"/>
+      </div>
+      <div class="form-group">
+        <label>Master Password</label>
+        <input type="password" id="auth-password" placeholder="Enter password"/>
+      </div>
+      <div class="form-group" style="margin-bottom: 10px;">
+        <label>MFA Token (6 digits)</label>
+        <input type="text" id="auth-mfa" placeholder="000000" maxlength="6" autocomplete="off"/>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="triggerPrank()">Confirm & Terminate</button>
+      </div>
     </div>
-    <div class="field">
-      <label>Authorization Token (Optional)</label>
-      <input type="password" placeholder="••••••••••••" disabled style="opacity: 0.5; cursor: not-allowed;"/>
-    </div>
-    
-    <button class="btn btn-outline" style="margin-top: 24px; color: var(--blue); border-color: var(--blue);" onclick="goReveal()">
-      Initialize Session
-    </button>
   </div>
-</div>
 
-<div class="screen" id="screen-4">
-  <div class="card">
-    <div class="reveal-emoji">🤡</div>
-    <h1 class="success-title">HTTP 418: I'm a teapot</h1>
-    <p class="subtitle" style="text-align: center;">
-      Exception in thread "main": java.lang.PrankException<br><br>
-      Haha <strong id="reveal-name" style="color: var(--blue);">User</strong>!<br>
-      There is no $8,400 bill. You just got played. You should really check your URLs before authenticating! 
-    </p>
+  <div id="video-container">
+    <video id="prank-video" src="1000009909.mp4" playsinline></video>
   </div>
-</div>
 
-<script>
-// SCREENS NAVIGATION
-function goScreen(n) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-'+n).classList.add('active');
-  if (n === 2) startTerminal();
-}
-
-// FAKE TERMINAL LOGIC
-function startTerminal() {
-  const terminal = document.getElementById('terminal-output');
-  terminal.innerHTML = '';
-  
-  const logs = [
-    "> ssh -i ~/.ssh/admin_key root@prod-db-cluster-01",
-    "[OK] Connection established. IP: 192.168.1.104",
-    "[INFO] Fetching access logs...",
-    "[INFO] Analyzing egress packet data...",
-    "<span class='warn'>[WARN] Multiple unauthorized requests detected from unknown IP.</span>",
-    "[INFO] Tracing origin...",
-    "[INFO] Parsing routing tables...",
-    "<span class='err'>[ERR] FATAL: Cannot display logs without user verification.</span>",
-    "Terminating session in 3... 2... 1..."
-  ];
-
-  let i = 0;
-  function printLine() {
-    if (i < logs.length) {
-      const p = document.createElement('p');
-      p.innerHTML = logs[i];
-      terminal.appendChild(p);
-      terminal.scrollTop = terminal.scrollHeight; // Auto-scroll
-      i++;
-      // Randomize typing speed for realism
-      setTimeout(printLine, Math.random() * 400 + 200); 
-    } else {
-      setTimeout(() => goScreen(3), 800); // Move to form after terminal finishes
+  <script>
+    // Tab switching logic
+    function switchTab(tabId, element) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      element.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
     }
-  }
-  setTimeout(printLine, 500);
-}
 
-// REVEAL LOGIC
-function goReveal() {
-  const nameInput = document.getElementById('victim-name').value.trim();
-  const name = nameInput !== '' ? nameInput : 'Hacker';
-  document.getElementById('reveal-name').textContent = name;
-  goScreen(4);
-}
-</script>
+    // Modal logic
+    const modal = document.getElementById('dispute-modal');
+    function openModal() {
+      modal.style.display = 'flex';
+      document.getElementById('auth-password').focus();
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      document.getElementById('auth-password').value = '';
+      document.getElementById('auth-mfa').value = '';
+    }
+
+    // Prank execution logic
+    function triggerPrank() {
+      const pass = document.getElementById('auth-password').value;
+      
+      // We don't actually care what they type, we just launch the video
+      const app = document.getElementById('app');
+      const videoContainer = document.getElementById('video-container');
+      const video = document.getElementById('prank-video');
+
+      // Hide UI and Modal
+      app.style.display = 'none';
+      modal.style.display = 'none';
+      
+      // Show video wrapper
+      videoContainer.style.display = 'block';
+      
+      // Attempt to go fullscreen for maximum effect (browser security policies may apply)
+      if (videoContainer.requestFullscreen) {
+        videoContainer.requestFullscreen().catch(err => {
+          console.log("Fullscreen blocked, playing inline instead.");
+        });
+      } else if (videoContainer.webkitRequestFullscreen) {
+        videoContainer.webkitRequestFullscreen();
+      }
+
+      // Play the video loudly. 
+      // Because this is triggered by a direct click event (user interaction),
+      // the browser will allow it to play with sound unmuted.
+      video.volume = 1.0;
+      video.play();
+    }
+  </script>
 </body>
 </html>
