@@ -3,321 +3,204 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>You Won a Prize! 🎉</title>
+  <title>System Alert | Cloud Infrastructure</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --yellow: #FFE234; --pink: #FF3CAC; --blue: #2BD9FE;
-      --green: #39FF14; --orange: #FF6B00; --bg: #0d0d1a;
+      --bg: #0d1117; --surface: #161b22; --border: #30363d;
+      --text-main: #c9d1d9; --text-muted: #8b949e;
+      --red: #f85149; --green: #3fb950; --blue: #58a6ff; --warning: #d29922;
     }
     body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      overflow: hidden; position: relative;
     }
+    
+    /* Grid Background */
     body::before {
-      content: ''; position: fixed; inset: 0;
-      background: radial-gradient(ellipse at 20% 50%, rgba(255,60,172,0.15) 0%, transparent 60%),
-                  radial-gradient(ellipse at 80% 20%, rgba(43,217,254,0.15) 0%, transparent 60%),
-                  radial-gradient(ellipse at 60% 80%, rgba(255,226,52,0.1) 0%, transparent 60%);
-      animation: bgPulse 4s ease-in-out infinite alternate; pointer-events: none;
+      content: ''; position: fixed; inset: 0; pointer-events: none;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px; opacity: 0.1; z-index: 0;
     }
-    @keyframes bgPulse { from { opacity:.6; } to { opacity:1; } }
 
     .screen {
       display: none; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center; padding: 30px 24px;
-      position: relative; z-index: 10;
-      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+      width: 100%; max-width: 480px;
+      padding: 32px; position: relative; z-index: 10;
+      animation: fadeIn 0.3s ease-out forwards;
     }
     .screen.active { display: flex; }
-    @keyframes popIn {
-      from { opacity:0; transform: scale(0.7) rotate(-3deg); }
-      to   { opacity:1; transform: scale(1) rotate(0deg); }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 32px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
 
-    .trophy {
-      font-size: 100px; line-height: 1; margin-bottom: 12px;
-      animation: bounce 0.8s ease infinite alternate;
-      filter: drop-shadow(0 0 30px rgba(255,226,52,0.8));
-    }
-    @keyframes bounce {
-      from { transform: translateY(0) scale(1); }
-      to   { transform: translateY(-18px) scale(1.08); }
-    }
-    h1 {
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(36px, 8vw, 72px);
-      background: linear-gradient(135deg, var(--yellow), var(--pink), var(--blue));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; line-height: 1.1; margin-bottom: 10px;
-    }
-    .subtitle {
-      font-size: clamp(16px, 3vw, 22px); color: rgba(255,255,255,0.85);
-      font-weight: 700; margin-bottom: 28px; max-width: 420px;
-    }
-    .prize-badge {
-      background: linear-gradient(135deg, #FFE234, #FF6B00);
-      border-radius: 20px; padding: 18px 36px; margin-bottom: 28px;
-      position: relative;
-      box-shadow: 0 0 40px rgba(255,226,52,0.5), 0 0 80px rgba(255,107,0,0.3);
-      animation: glowPulse 1.5s ease-in-out infinite;
-    }
-    @keyframes glowPulse {
-      0%,100% { box-shadow: 0 0 40px rgba(255,226,52,0.5), 0 0 80px rgba(255,107,0,0.3); }
-      50%      { box-shadow: 0 0 60px rgba(255,226,52,0.8), 0 0 120px rgba(255,107,0,0.5); }
-    }
-    .prize-badge p { font-family: 'Fredoka One', cursive; font-size: clamp(18px,4vw,28px); color: #0d0d1a; line-height: 1.2; }
-    .prize-badge .prize-amount { font-size: clamp(36px,7vw,58px); display: block; }
-    .ribbon {
-      position: absolute; top: -4px; right: -4px;
-      background: var(--pink); color: #fff; font-size: 10px; font-weight: 900;
-      padding: 4px 10px; border-radius: 4px; letter-spacing: 0.06em;
-      animation: blink 1s step-start infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
+    /* Typography */
+    h1 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: var(--red); display: flex; align-items: center; gap: 10px; }
+    .subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+    code { font-family: 'Fira Code', monospace; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 13px; color: var(--blue); }
 
-    .timer-wrap {
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px; padding: 14px 28px; margin-bottom: 28px; backdrop-filter: blur(10px);
+    /* Alert Box */
+    .billing-alert {
+      background: rgba(248, 81, 73, 0.1); border-left: 4px solid var(--red);
+      padding: 16px; margin-bottom: 24px; border-radius: 0 4px 4px 0;
     }
-    .timer-label { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-    .timer-digits { font-family: 'Fredoka One', cursive; font-size: 42px; color: var(--yellow); letter-spacing: 4px; text-shadow: 0 0 20px rgba(255,226,52,0.6); }
+    .billing-alert .amount { font-family: 'Fira Code', monospace; font-size: 32px; font-weight: 700; color: var(--red); margin: 8px 0; }
+    .billing-alert p { font-size: 13px; color: var(--text-main); }
 
-    .claim-btn {
-      background: linear-gradient(135deg, var(--pink), #784ba0, var(--blue));
-      color: #fff; border: none; border-radius: 50px;
-      padding: 18px 48px; font-family: 'Fredoka One', cursive;
-      font-size: 24px; cursor: pointer;
-      box-shadow: 0 8px 32px rgba(255,60,172,0.5);
-      transition: transform 0.15s, box-shadow 0.15s;
-      position: relative; overflow: hidden; margin-bottom: 14px;
+    /* Buttons */
+    .btn {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-main); font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 600; padding: 12px 16px; border-radius: 6px;
+      cursor: pointer; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;
     }
-    .claim-btn:hover { transform: scale(1.06) translateY(-2px); box-shadow: 0 16px 48px rgba(255,60,172,0.7); }
-    .fine-print { font-size: 10px; color: rgba(255,255,255,0.2); max-width: 340px; line-height: 1.5; }
+    .btn-danger { background: var(--red); color: #fff; border-color: var(--red); }
+    .btn-danger:hover { background: #d13b34; }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: var(--text-muted); }
 
-    /* Loading screen */
-    .loading-icon { font-size: 70px; margin-bottom: 16px; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-title { font-family: 'Fredoka One', cursive; font-size: 32px; color: var(--blue); margin-bottom: 10px; }
-    .loading-sub { color: rgba(255,255,255,0.6); font-size: 15px; margin-bottom: 28px; }
-    .progress-bar-wrap {
-      width: 320px; max-width: 90vw; background: rgba(255,255,255,0.08);
-      border-radius: 50px; height: 18px; overflow: hidden; margin-bottom: 10px;
-      border: 1px solid rgba(255,255,255,0.1);
+    /* Terminal Screen */
+    .terminal {
+      background: #000; border: 1px solid var(--border); border-radius: 6px;
+      padding: 16px; font-family: 'Fira Code', monospace; font-size: 12px;
+      color: var(--green); height: 200px; overflow-y: auto; text-align: left;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
     }
-    .progress-bar-fill {
-      height: 100%; border-radius: 50px;
-      background: linear-gradient(90deg, var(--pink), var(--blue), var(--green));
-      background-size: 200% 100%; animation: shimmer 1s linear infinite;
-      transition: width 0.3s ease; width: 0%;
-    }
-    @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-    .progress-label { font-size: 13px; color: rgba(255,255,255,0.4); }
-    .step-list { margin-top: 18px; text-align: left; width: 320px; max-width: 90vw; }
-    .step-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.4); padding: 5px 0; transition: color 0.3s; }
-    .step-item.done { color: var(--green); }
-    .step-icon { width: 18px; text-align: center; }
+    .terminal p { margin-bottom: 6px; opacity: 0; animation: blinkIn 0.1s forwards; }
+    .terminal .warn { color: var(--warning); }
+    .terminal .err { color: var(--red); }
+    @keyframes blinkIn { to { opacity: 1; } }
 
-    /* Form screen */
-    .form-wrap {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px; padding: 32px 28px; width: 380px; max-width: 92vw; backdrop-filter: blur(12px);
-    }
-    .form-title { font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--yellow); margin-bottom: 6px; }
-    .form-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 22px; }
-    .field { margin-bottom: 14px; text-align: left; }
-    .field label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.07em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+    /* Form */
+    .field { margin-bottom: 16px; text-align: left; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
     .field input {
-      width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 10px; color: #fff; font-family: 'Nunito', sans-serif;
-      font-size: 15px; font-weight: 600; padding: 12px 14px; outline: none; transition: border-color 0.2s;
+      width: 100%; background: #000; border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text-main); font-family: 'Fira Code', monospace;
+      font-size: 14px; padding: 10px 12px; outline: none; transition: border-color 0.2s;
     }
-    .field input:focus { border-color: var(--pink); }
-    .field input::placeholder { color: rgba(255,255,255,0.2); }
-    .submit-btn {
-      width: 100%; background: linear-gradient(135deg, var(--green), #00b300);
-      color: #0d0d1a; border: none; border-radius: 12px; padding: 15px;
-      font-family: 'Fredoka One', cursive; font-size: 20px; cursor: pointer;
-      box-shadow: 0 4px 24px rgba(57,255,20,0.35); margin-top: 4px;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(57,255,20,0.5); }
+    .field input:focus { border-color: var(--blue); }
 
-    /* Reveal screen */
-    .reveal-emoji { font-size: 90px; margin-bottom: 16px; animation: shake 0.5s ease infinite alternate; }
-    @keyframes shake { from { transform: rotate(-8deg) scale(1); } to { transform: rotate(8deg) scale(1.1); } }
-    .reveal-title { font-family: 'Fredoka One', cursive; font-size: clamp(36px,8vw,64px); color: var(--yellow); margin-bottom: 10px; text-shadow: 0 0 30px rgba(255,226,52,0.5); }
-    .reveal-sub { font-size: clamp(16px,3vw,22px); color: rgba(255,255,255,0.8); max-width: 400px; line-height: 1.5; margin-bottom: 24px; font-weight: 700; }
-    .victim-name { color: var(--pink); font-family: 'Fredoka One', cursive; }
-    .share-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
-    .share-btn {
-      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 50px; color: #fff; font-family: 'Nunito', sans-serif;
-      font-size: 14px; font-weight: 700; padding: 11px 22px; cursor: pointer;
-      transition: background 0.2s, transform 0.15s; display: flex; align-items: center; gap: 7px;
-    }
-    .share-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.04); }
-    .again-btn {
-      background: none; border: 2px solid rgba(255,255,255,0.2); border-radius: 50px;
-      color: rgba(255,255,255,0.5); font-family: 'Nunito', sans-serif; font-size: 14px;
-      padding: 10px 24px; cursor: pointer; transition: all 0.2s;
-    }
-    .again-btn:hover { border-color: var(--yellow); color: var(--yellow); }
-
-    @keyframes floatUp {
-      from { transform: translateY(100vh) rotate(0deg); opacity: 0.5; }
-      to   { transform: translateY(-100px) rotate(720deg); opacity: 0; }
-    }
+    /* Reveal */
+    .reveal-emoji { font-size: 64px; margin-bottom: 16px; text-align: center; }
+    .success-title { color: var(--green); text-align: center; margin-bottom: 16px; }
   </style>
 </head>
 <body>
 
 <div class="screen active" id="screen-1">
-  <div class="trophy">🏆</div>
-  <h1>YOU WON!</h1>
-  <p class="subtitle">Congratulations! You've been randomly selected from <strong>10,000,000</strong> users!</p>
-  <div class="prize-badge">
-    <span class="ribbon">VERIFIED ✓</span>
-    <p>Your Prize:<br><span class="prize-amount">💰 $1,000</span>Amazon Gift Card</p>
+  <div class="card">
+    <h1><span style="font-size: 20px;">⚠️</span> Action Required</h1>
+    <p class="subtitle">Anomalous outbound traffic detected on instance <code>prod-db-cluster-01</code>. Your free-tier limits have been exceeded.</p>
+    
+    <div class="billing-alert">
+      <p>Pending Overage Charges:</p>
+      <div class="amount">$8,409.32</div>
+      <p style="color: var(--text-muted);">Billing cycle ends in 02:14:59</p>
+    </div>
+
+    <button class="btn btn-danger" onclick="goScreen(2)">Authenticate & Review Logs</button>
   </div>
-  <div class="timer-wrap">
-    <div class="timer-label">⚠️ Offer expires in</div>
-    <div class="timer-digits"><span id="countdown">09:59</span></div>
-  </div>
-  <button class="claim-btn" onclick="goScreen(2)">🎁 CLAIM YOUR PRIZE →</button>
-  <p class="fine-print">By clicking claim, you agree to our Terms & Conditions. This offer is non-transferable and subject to verification. Void where prohibited by law.</p>
 </div>
 
 <div class="screen" id="screen-2">
-  <div class="loading-icon">⚙️</div>
-  <div class="loading-title">Verifying Winner…</div>
-  <div class="loading-sub">Please wait while we confirm your eligibility</div>
-  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
-  <div class="progress-label" id="progress-label">0%</div>
-  <div class="step-list">
-    <div class="step-item" id="step-0"><span class="step-icon">⏳</span> Connecting to prize server…</div>
-    <div class="step-item" id="step-1"><span class="step-icon">⏳</span> Verifying your IP address…</div>
-    <div class="step-item" id="step-2"><span class="step-icon">⏳</span> Confirming account eligibility…</div>
-    <div class="step-item" id="step-3"><span class="step-icon">⏳</span> Allocating prize funds…</div>
-    <div class="step-item" id="step-4"><span class="step-icon">⏳</span> Almost done…</div>
+  <div class="card" style="padding: 16px;">
+    <div class="terminal" id="terminal-output">
+      </div>
   </div>
 </div>
 
 <div class="screen" id="screen-3">
-  <div class="form-wrap">
-    <div class="form-title">🎉 Winner Confirmed!</div>
-    <div class="form-sub">Enter your details to receive your $1,000 gift card</div>
-    <div class="field"><label>Your Full Name</label><input type="text" id="victim-name" placeholder="John Smith"/></div>
-    <div class="field"><label>Email Address</label><input type="email" placeholder="your@email.com"/></div>
-    <div class="field"><label>Phone Number</label><input type="tel" placeholder="+1 (555) 000-0000"/></div>
+  <div class="card">
+    <h1 style="color: var(--text-main); font-size: 20px;">Identity Verification</h1>
+    <p class="subtitle">Please verify your developer alias to access the isolated environment logs.</p>
+    
     <div class="field">
-      <label>Credit Card (for $1 verification fee) 😈</label>
-      <input type="text" placeholder="Just kidding... or are we? 😂" style="color:var(--pink);"/>
+      <label>Developer Alias / Handle</label>
+      <input type="text" id="victim-name" placeholder="e.g. root, admin, neo" autocomplete="off"/>
     </div>
-    <button class="submit-btn" onclick="goReveal()">💸 CLAIM $1,000 NOW</button>
+    <div class="field">
+      <label>Authorization Token (Optional)</label>
+      <input type="password" placeholder="••••••••••••" disabled style="opacity: 0.5; cursor: not-allowed;"/>
+    </div>
+    
+    <button class="btn btn-outline" style="margin-top: 24px; color: var(--blue); border-color: var(--blue);" onclick="goReveal()">
+      Initialize Session
+    </button>
   </div>
 </div>
 
 <div class="screen" id="screen-4">
-  <div class="reveal-emoji">😂</div>
-  <div class="reveal-title">GOT YOU!</div>
-  <p class="reveal-sub">
-    Haha <span class="victim-name" id="reveal-name">Friend</span>!<br>
-    There is no prize. You just got pranked! 🎭<br>
-    <span style="font-size:16px;color:rgba(255,255,255,0.5);">Hope you didn't actually type your credit card 💀</span>
-  </p>
-  <div class="share-row">
-    <button class="share-btn" onclick="copyLink()">🔗 Copy Prank Link</button>
-    <button class="share-btn" onclick="shareWhatsApp()">💬 Send to WhatsApp</button>
+  <div class="card">
+    <div class="reveal-emoji">🤡</div>
+    <h1 class="success-title">HTTP 418: I'm a teapot</h1>
+    <p class="subtitle" style="text-align: center;">
+      Exception in thread "main": java.lang.PrankException<br><br>
+      Haha <strong id="reveal-name" style="color: var(--blue);">User</strong>!<br>
+      There is no $8,400 bill. You just got played. You should really check your URLs before authenticating! 
+    </p>
   </div>
-  <button class="again-btn" onclick="resetPrank()">↺ Prank Someone Else</button>
 </div>
 
 <script>
-// COUNTDOWN
-let secs = 9*60+59;
-const cdEl = document.getElementById('countdown');
-setInterval(() => {
-  if (secs <= 0) { cdEl.textContent = '00:00'; return; } secs--;
-  cdEl.textContent = String(Math.floor(secs/60)).padStart(2,'0') + ':' + String(secs%60).padStart(2,'0');
-}, 1000);
-
-// SCREENS
+// SCREENS NAVIGATION
 function goScreen(n) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-'+n).classList.add('active');
-  if (n === 2) startLoading();
+  if (n === 2) startTerminal();
 }
 
-// FAKE LOADING
-function startLoading() {
-  const fill = document.getElementById('progress-fill');
-  const label = document.getElementById('progress-label');
-  let pct = 0;
-  [600,1100,1800,2600,3400].forEach((t,i) => {
-    setTimeout(() => {
-      const el = document.getElementById('step-'+i);
-      el.classList.add('done'); el.querySelector('.step-icon').textContent = '✅';
-    }, t);
-  });
-  const iv = setInterval(() => {
-    pct += Math.random() * 3 + 0.5;
-    if (pct >= 100) { pct = 100; clearInterval(iv); setTimeout(() => goScreen(3), 600); }
-    fill.style.width = pct+'%'; label.textContent = Math.floor(pct)+'%';
-  }, 80);
+// FAKE TERMINAL LOGIC
+function startTerminal() {
+  const terminal = document.getElementById('terminal-output');
+  terminal.innerHTML = '';
+  
+  const logs = [
+    "> ssh -i ~/.ssh/admin_key root@prod-db-cluster-01",
+    "[OK] Connection established. IP: 192.168.1.104",
+    "[INFO] Fetching access logs...",
+    "[INFO] Analyzing egress packet data...",
+    "<span class='warn'>[WARN] Multiple unauthorized requests detected from unknown IP.</span>",
+    "[INFO] Tracing origin...",
+    "[INFO] Parsing routing tables...",
+    "<span class='err'>[ERR] FATAL: Cannot display logs without user verification.</span>",
+    "Terminating session in 3... 2... 1..."
+  ];
+
+  let i = 0;
+  function printLine() {
+    if (i < logs.length) {
+      const p = document.createElement('p');
+      p.innerHTML = logs[i];
+      terminal.appendChild(p);
+      terminal.scrollTop = terminal.scrollHeight; // Auto-scroll
+      i++;
+      // Randomize typing speed for realism
+      setTimeout(printLine, Math.random() * 400 + 200); 
+    } else {
+      setTimeout(() => goScreen(3), 800); // Move to form after terminal finishes
+    }
+  }
+  setTimeout(printLine, 500);
 }
 
-// REVEAL
+// REVEAL LOGIC
 function goReveal() {
-  const name = document.getElementById('victim-name').value.trim() || 'Friend';
+  const nameInput = document.getElementById('victim-name').value.trim();
+  const name = nameInput !== '' ? nameInput : 'Hacker';
   document.getElementById('reveal-name').textContent = name;
   goScreen(4);
 }
-
-// SHARE
-function copyLink() {
-  navigator.clipboard.writeText(window.location.href)
-    .then(() => showToast('🔗 Link copied! Send it to your next victim 😈'))
-    .catch(() => showToast('Copy the URL from your browser bar!'));
-}
-function shareWhatsApp() {
-  window.open("https://wa.me/?text=" + encodeURIComponent("🎉 OMG you won a prize! Click here to claim it: " + window.location.href), '_blank');
-}
-
-// RESET
-function resetPrank() {
-  document.getElementById('victim-name').value = '';
-  document.querySelectorAll('.step-item').forEach(el => { el.classList.remove('done'); el.querySelector('.step-icon').textContent = '⏳'; });
-  document.getElementById('progress-fill').style.width = '0%';
-  document.getElementById('progress-label').textContent = '0%';
-  secs = 9*60+59; goScreen(1);
-}
-
-// TOAST
-function showToast(msg) {
-  let t = document.getElementById('prank-toast');
-  if (!t) {
-    t = document.createElement('div'); t.id = 'prank-toast';
-    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:50px;padding:12px 24px;font-family:Nunito,sans-serif;font-weight:700;font-size:14px;z-index:999;opacity:0;transition:all 0.3s;white-space:nowrap;';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
-  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 3000);
-}
-
-// FLOATING EMOJIS
-['💰','🎁','✨','🎉','💸','🏆','⭐'].forEach((e, i) => {
-  const el = document.createElement('div');
-  el.style.cssText = `position:fixed;font-size:${18+Math.random()*18}px;left:${Math.random()*100}%;animation:floatUp ${5+Math.random()*6}s ${i*1.2}s linear infinite;pointer-events:none;z-index:0;`;
-  el.textContent = e; document.body.appendChild(el);
-});
 </script>
 </body>
 </html>
