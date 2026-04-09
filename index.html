@@ -3,64 +3,39 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>You Won a Prize! \ud83c\udf89</title>
+  <title>You Won a Prize! 🎉</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --yellow: #FFE234;
-      --pink: #FF3CAC;
-      --blue: #2BD9FE;
-      --green: #39FF14;
-      --orange: #FF6B00;
-      --bg: #0d0d1a;
+      --yellow: #FFE234; --pink: #FF3CAC; --blue: #2BD9FE;
+      --green: #39FF14; --orange: #FF6B00; --bg: #0d0d1a;
     }
-
     body {
       font-family: 'Nunito', sans-serif;
       background: var(--bg);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      position: relative;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
     }
-
-    /* Animated gradient bg */
     body::before {
-      content: '';
-      position: fixed; inset: 0;
+      content: ''; position: fixed; inset: 0;
       background: radial-gradient(ellipse at 20% 50%, rgba(255,60,172,0.15) 0%, transparent 60%),
                   radial-gradient(ellipse at 80% 20%, rgba(43,217,254,0.15) 0%, transparent 60%),
                   radial-gradient(ellipse at 60% 80%, rgba(255,226,52,0.1) 0%, transparent 60%);
-      animation: bgPulse 4s ease-in-out infinite alternate;
-      pointer-events: none;
+      animation: bgPulse 4s ease-in-out infinite alternate; pointer-events: none;
     }
-    @keyframes bgPulse {
-      from { opacity: 0.6; }
-      to   { opacity: 1; }
-    }
+    @keyframes bgPulse { from { opacity:.6; } to { opacity:1; } }
 
-    /* \u2500\u2500 CONFETTI \u2500\u2500 */
-    #confetti-canvas {
-      position: fixed; inset: 0;
-      pointer-events: none; z-index: 0;
-    }
+    #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
 
-    /* \u2500\u2500 SCREENS \u2500\u2500 */
     .screen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 30px 24px;
-      position: relative;
-      z-index: 10;
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 30px 24px;
+      position: relative; z-index: 10;
       animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
     }
     .screen.active { display: flex; }
@@ -69,44 +44,30 @@
       to   { opacity:1; transform: scale(1) rotate(0deg); }
     }
 
-    /* \u2500\u2500 SCREEN 1: Winner \u2500\u2500 */
     .trophy {
-      font-size: 100px;
+      font-size: 100px; line-height: 1; margin-bottom: 12px;
       animation: bounce 0.8s ease infinite alternate;
       filter: drop-shadow(0 0 30px rgba(255,226,52,0.8));
-      line-height: 1;
-      margin-bottom: 12px;
     }
     @keyframes bounce {
       from { transform: translateY(0) scale(1); }
       to   { transform: translateY(-18px) scale(1.08); }
     }
-
     h1 {
       font-family: 'Fredoka One', cursive;
       font-size: clamp(36px, 8vw, 72px);
       background: linear-gradient(135deg, var(--yellow), var(--pink), var(--blue));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.1;
-      margin-bottom: 10px;
-      text-shadow: none;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; line-height: 1.1; margin-bottom: 10px;
     }
-
     .subtitle {
-      font-size: clamp(16px, 3vw, 22px);
-      color: rgba(255,255,255,0.85);
-      font-weight: 700;
-      margin-bottom: 28px;
-      max-width: 420px;
+      font-size: clamp(16px, 3vw, 22px); color: rgba(255,255,255,0.85);
+      font-weight: 700; margin-bottom: 28px; max-width: 420px;
     }
-
     .prize-badge {
       background: linear-gradient(135deg, #FFE234, #FF6B00);
-      border-radius: 20px;
-      padding: 18px 36px;
-      margin-bottom: 28px;
+      border-radius: 20px; padding: 18px 36px; margin-bottom: 28px;
+      position: relative;
       box-shadow: 0 0 40px rgba(255,226,52,0.5), 0 0 80px rgba(255,107,0,0.3);
       animation: glowPulse 1.5s ease-in-out infinite;
     }
@@ -114,113 +75,287 @@
       0%,100% { box-shadow: 0 0 40px rgba(255,226,52,0.5), 0 0 80px rgba(255,107,0,0.3); }
       50%      { box-shadow: 0 0 60px rgba(255,226,52,0.8), 0 0 120px rgba(255,107,0,0.5); }
     }
-    .prize-badge p {
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(18px, 4vw, 28px);
-      color: #0d0d1a;
-      line-height: 1.2;
+    .prize-badge p { font-family: 'Fredoka One', cursive; font-size: clamp(18px,4vw,28px); color: #0d0d1a; line-height: 1.2; }
+    .prize-badge .prize-amount { font-size: clamp(36px,7vw,58px); display: block; }
+    .ribbon {
+      position: absolute; top: -4px; right: -4px;
+      background: var(--pink); color: #fff; font-size: 10px; font-weight: 900;
+      padding: 4px 10px; border-radius: 4px; letter-spacing: 0.06em;
+      animation: blink 1s step-start infinite;
     }
-    .prize-badge .prize-amount {
-      font-size: clamp(36px, 7vw, 58px);
-      display: block;
-    }
+    @keyframes blink { 50% { opacity: 0; } }
 
     .timer-wrap {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 14px 28px;
-      margin-bottom: 28px;
-      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 14px 28px; margin-bottom: 28px; backdrop-filter: blur(10px);
     }
     .timer-label { font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
-    .timer-digits {
-      font-family: 'Fredoka One', cursive;
-      font-size: 42px;
-      color: var(--yellow);
-      letter-spacing: 4px;
-      text-shadow: 0 0 20px rgba(255,226,52,0.6);
-    }
-    #countdown { display: inline-block; min-width: 80px; }
+    .timer-digits { font-family: 'Fredoka One', cursive; font-size: 42px; color: var(--yellow); letter-spacing: 4px; text-shadow: 0 0 20px rgba(255,226,52,0.6); }
 
     .claim-btn {
       background: linear-gradient(135deg, var(--pink), #784ba0, var(--blue));
-      color: #fff;
-      border: none;
-      border-radius: 50px;
-      padding: 18px 48px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 24px;
-      cursor: pointer;
+      color: #fff; border: none; border-radius: 50px;
+      padding: 18px 48px; font-family: 'Fredoka One', cursive;
+      font-size: 24px; cursor: pointer;
       box-shadow: 0 8px 32px rgba(255,60,172,0.5);
       transition: transform 0.15s, box-shadow 0.15s;
-      position: relative;
-      overflow: hidden;
-      letter-spacing: 0.02em;
-      margin-bottom: 14px;
-    }
-    .claim-btn::after {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+      position: relative; overflow: hidden; margin-bottom: 14px;
     }
     .claim-btn:hover { transform: scale(1.06) translateY(-2px); box-shadow: 0 16px 48px rgba(255,60,172,0.7); }
-    .claim-btn:active { transform: scale(0.97); }
+    .fine-print { font-size: 10px; color: rgba(255,255,255,0.2); max-width: 340px; line-height: 1.5; }
 
-    .fine-print {
-      font-size: 10px; color: rgba(255,255,255,0.25);
-      max-width: 340px; line-height: 1.5;
-    }
-
-    /* \u2500\u2500 SCREEN 2: Fake Loading \u2500\u2500 */
+    /* Loading screen */
     .loading-icon { font-size: 70px; margin-bottom: 16px; animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-title {
-      font-family: 'Fredoka One', cursive;
-      font-size: 32px; color: var(--blue);
-      margin-bottom: 10px;
-    }
+    .loading-title { font-family: 'Fredoka One', cursive; font-size: 32px; color: var(--blue); margin-bottom: 10px; }
     .loading-sub { color: rgba(255,255,255,0.6); font-size: 15px; margin-bottom: 28px; }
     .progress-bar-wrap {
-      width: 320px; max-width: 90vw;
-      background: rgba(255,255,255,0.08);
-      border-radius: 50px; height: 18px;
-      overflow: hidden; margin-bottom: 10px;
+      width: 320px; max-width: 90vw; background: rgba(255,255,255,0.08);
+      border-radius: 50px; height: 18px; overflow: hidden; margin-bottom: 10px;
       border: 1px solid rgba(255,255,255,0.1);
     }
     .progress-bar-fill {
       height: 100%; border-radius: 50px;
       background: linear-gradient(90deg, var(--pink), var(--blue), var(--green));
-      background-size: 200% 100%;
-      animation: shimmer 1s linear infinite;
-      transition: width 0.3s ease;
-      width: 0%;
+      background-size: 200% 100%; animation: shimmer 1s linear infinite;
+      transition: width 0.3s ease; width: 0%;
     }
-    @keyframes shimmer {
-      from { background-position: 200% 0; }
-      to   { background-position: -200% 0; }
-    }
+    @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
     .progress-label { font-size: 13px; color: rgba(255,255,255,0.4); }
     .step-list { margin-top: 18px; text-align: left; width: 320px; max-width: 90vw; }
-    .step-item {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 13px; color: rgba(255,255,255,0.4);
-      padding: 5px 0;
-      transition: color 0.3s;
-    }
+    .step-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,0.4); padding: 5px 0; transition: color 0.3s; }
     .step-item.done { color: var(--green); }
     .step-icon { width: 18px; text-align: center; }
 
-    /* \u2500\u2500 SCREEN 3: "Info" Form \u2500\u2500 */
+    /* Form screen */
     .form-wrap {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
-      padding: 32px 28px;
-      width: 380px; max-width: 92vw;
-      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px; padding: 32px 28px; width: 380px; max-width: 92vw; backdrop-filter: blur(12px);
     }
-    .form-title {
-      font-family: 'Fredoka One', cursive;
-      font-size: 28px; color: var(--yellow);
-      margin-bottom: 6
+    .form-title { font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--yellow); margin-bottom: 6px; }
+    .form-sub { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 22px; }
+    .field { margin-bottom: 14px; text-align: left; }
+    .field label { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.07em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+    .field input {
+      width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px; color: #fff; font-family: 'Nunito', sans-serif;
+      font-size: 15px; font-weight: 600; padding: 12px 14px; outline: none; transition: border-color 0.2s;
+    }
+    .field input:focus { border-color: var(--pink); }
+    .field input::placeholder { color: rgba(255,255,255,0.2); }
+    .submit-btn {
+      width: 100%; background: linear-gradient(135deg, var(--green), #00b300);
+      color: #0d0d1a; border: none; border-radius: 12px; padding: 15px;
+      font-family: 'Fredoka One', cursive; font-size: 20px; cursor: pointer;
+      box-shadow: 0 4px 24px rgba(57,255,20,0.35); margin-top: 4px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(57,255,20,0.5); }
+
+    /* Reveal screen */
+    .reveal-emoji { font-size: 90px; margin-bottom: 16px; animation: shake 0.5s ease infinite alternate; }
+    @keyframes shake { from { transform: rotate(-8deg) scale(1); } to { transform: rotate(8deg) scale(1.1); } }
+    .reveal-title { font-family: 'Fredoka One', cursive; font-size: clamp(36px,8vw,64px); color: var(--yellow); margin-bottom: 10px; text-shadow: 0 0 30px rgba(255,226,52,0.5); }
+    .reveal-sub { font-size: clamp(16px,3vw,22px); color: rgba(255,255,255,0.8); max-width: 400px; line-height: 1.5; margin-bottom: 24px; font-weight: 700; }
+    .victim-name { color: var(--pink); font-family: 'Fredoka One', cursive; }
+    .share-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
+    .share-btn {
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50px; color: #fff; font-family: 'Nunito', sans-serif;
+      font-size: 14px; font-weight: 700; padding: 11px 22px; cursor: pointer;
+      transition: background 0.2s, transform 0.15s; display: flex; align-items: center; gap: 7px;
+    }
+    .share-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.04); }
+    .again-btn {
+      background: none; border: 2px solid rgba(255,255,255,0.2); border-radius: 50px;
+      color: rgba(255,255,255,0.5); font-family: 'Nunito', sans-serif; font-size: 14px;
+      padding: 10px 24px; cursor: pointer; transition: all 0.2s;
+    }
+    .again-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+
+    @keyframes floatUp {
+      from { transform: translateY(100vh) rotate(0deg); opacity: 0.5; }
+      to   { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- SCREEN 1: YOU WON -->
+<div class="screen active" id="screen-1">
+  <div class="trophy">🏆</div>
+  <h1>YOU WON!</h1>
+  <p class="subtitle">Congratulations! You've been randomly selected from <strong>10,000,000</strong> users!</p>
+  <div class="prize-badge">
+    <span class="ribbon">VERIFIED ✓</span>
+    <p>Your Prize:<br><span class="prize-amount">💰 $1,000</span>Amazon Gift Card</p>
+  </div>
+  <div class="timer-wrap">
+    <div class="timer-label">⚠️ Offer expires in</div>
+    <div class="timer-digits"><span id="countdown">09:59</span></div>
+  </div>
+  <button class="claim-btn" onclick="goScreen(2)">🎁 CLAIM YOUR PRIZE →</button>
+  <p class="fine-print">By clicking claim, you agree to our Terms & Conditions. This offer is non-transferable and subject to verification. Void where prohibited by law.</p>
+</div>
+
+<!-- SCREEN 2: FAKE LOADING -->
+<div class="screen" id="screen-2">
+  <div class="loading-icon">⚙️</div>
+  <div class="loading-title">Verifying Winner…</div>
+  <div class="loading-sub">Please wait while we confirm your eligibility</div>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  <div class="progress-label" id="progress-label">0%</div>
+  <div class="step-list">
+    <div class="step-item" id="step-0"><span class="step-icon">⏳</span> Connecting to prize server…</div>
+    <div class="step-item" id="step-1"><span class="step-icon">⏳</span> Verifying your IP address…</div>
+    <div class="step-item" id="step-2"><span class="step-icon">⏳</span> Confirming account eligibility…</div>
+    <div class="step-item" id="step-3"><span class="step-icon">⏳</span> Allocating prize funds…</div>
+    <div class="step-item" id="step-4"><span class="step-icon">⏳</span> Almost done…</div>
+  </div>
+</div>
+
+<!-- SCREEN 3: FAKE FORM -->
+<div class="screen" id="screen-3">
+  <div class="form-wrap">
+    <div class="form-title">🎉 Winner Confirmed!</div>
+    <div class="form-sub">Enter your details to receive your $1,000 gift card</div>
+    <div class="field"><label>Your Full Name</label><input type="text" id="victim-name" placeholder="John Smith"/></div>
+    <div class="field"><label>Email Address</label><input type="email" placeholder="your@email.com"/></div>
+    <div class="field"><label>Phone Number</label><input type="tel" placeholder="+1 (555) 000-0000"/></div>
+    <div class="field">
+      <label>Credit Card (for $1 verification fee) 😈</label>
+      <input type="text" placeholder="Just kidding... or are we? 😂" style="color:var(--pink);"/>
+    </div>
+    <button class="submit-btn" onclick="goReveal()">💸 CLAIM $1,000 NOW</button>
+  </div>
+</div>
+
+<!-- SCREEN 4: PRANK REVEAL -->
+<div class="screen" id="screen-4">
+  <div class="reveal-emoji">😂</div>
+  <div class="reveal-title">GOT YOU!</div>
+  <p class="reveal-sub">
+    Haha <span class="victim-name" id="reveal-name">Friend</span>!<br>
+    There is no prize. You just got pranked! 🎭<br>
+    <span style="font-size:16px;color:rgba(255,255,255,0.5);">Hope you didn't actually type your credit card 💀</span>
+  </p>
+  <div class="share-row">
+    <button class="share-btn" onclick="copyLink()">🔗 Copy Prank Link</button>
+    <button class="share-btn" onclick="shareWhatsApp()">💬 Send to WhatsApp</button>
+  </div>
+  <button class="again-btn" onclick="resetPrank()">↺ Prank Someone Else</button>
+</div>
+
+<script>
+// CONFETTI
+const canvas = document.getElementById('confetti-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+const COLORS = ['#FFE234','#FF3CAC','#2BD9FE','#39FF14','#FF6B00','#fff'];
+const pieces = Array.from({length: 120}, () => ({
+  x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height,
+  r: Math.random() * 7 + 3, d: Math.random() * 120 + 60,
+  color: COLORS[Math.floor(Math.random() * COLORS.length)],
+  tilt: 0, tiltAngle: 0, tiltAngleInc: Math.random() * 0.07 + 0.05,
+  shape: Math.random() > 0.5 ? 'rect' : 'circle',
+}));
+function drawConfetti() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pieces.forEach(p => {
+    p.tiltAngle += p.tiltAngleInc;
+    p.y += Math.cos(p.d) + 1.2; p.x += Math.sin(p.tiltAngle) * 1.5;
+    p.tilt = Math.sin(p.tiltAngle - p.d/2) * 12;
+    if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+    ctx.beginPath(); ctx.fillStyle = p.color;
+    if (p.shape === 'circle') { ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); }
+    else { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.tilt * Math.PI/180); ctx.fillRect(-p.r, -p.r*2, p.r*2, p.r*2); ctx.restore(); }
+    ctx.fill();
+  });
+  requestAnimationFrame(drawConfetti);
+}
+drawConfetti();
+
+// COUNTDOWN
+let secs = 9*60+59;
+const cdEl = document.getElementById('countdown');
+setInterval(() => {
+  if (secs <= 0) { cdEl.textContent = '00:00'; return; } secs--;
+  cdEl.textContent = String(Math.floor(secs/60)).padStart(2,'0') + ':' + String(secs%60).padStart(2,'0');
+}, 1000);
+
+// SCREENS
+function goScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+n).classList.add('active');
+  if (n === 2) startLoading();
+}
+
+// FAKE LOADING
+function startLoading() {
+  const fill = document.getElementById('progress-fill');
+  const label = document.getElementById('progress-label');
+  let pct = 0;
+  [600,1100,1800,2600,3400].forEach((t,i) => {
+    setTimeout(() => {
+      const el = document.getElementById('step-'+i);
+      el.classList.add('done'); el.querySelector('.step-icon').textContent = '✅';
+    }, t);
+  });
+  const iv = setInterval(() => {
+    pct += Math.random() * 3 + 0.5;
+    if (pct >= 100) { pct = 100; clearInterval(iv); setTimeout(() => goScreen(3), 600); }
+    fill.style.width = pct+'%'; label.textContent = Math.floor(pct)+'%';
+  }, 80);
+}
+
+// REVEAL
+function goReveal() {
+  const name = document.getElementById('victim-name').value.trim() || 'Friend';
+  document.getElementById('reveal-name').textContent = name;
+  goScreen(4);
+  pieces.forEach(p => { p.y = Math.random() * -200; });
+}
+
+// SHARE
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href)
+    .then(() => showToast('🔗 Link copied! Send it to your next victim 😈'))
+    .catch(() => showToast('Copy the URL from your browser bar!'));
+}
+function shareWhatsApp() {
+  window.open("https://wa.me/?text=" + encodeURIComponent("🎉 OMG you won a prize! Click here to claim it: " + window.location.href), '_blank');
+}
+
+// RESET
+function resetPrank() {
+  document.getElementById('victim-name').value = '';
+  document.querySelectorAll('.step-item').forEach(el => { el.classList.remove('done'); el.querySelector('.step-icon').textContent = '⏳'; });
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('progress-label').textContent = '0%';
+  secs = 9*60+59; goScreen(1);
+}
+
+// TOAST
+function showToast(msg) {
+  let t = document.getElementById('prank-toast');
+  if (!t) {
+    t = document.createElement('div'); t.id = 'prank-toast';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:50px;padding:12px 24px;font-family:Nunito,sans-serif;font-weight:700;font-size:14px;z-index:999;opacity:0;transition:all 0.3s;white-space:nowrap;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(20px)'; }, 3000);
+}
+
+// FLOATING EMOJIS
+['💰','🎁','✨','🎉','💸','🏆','⭐'].forEach((e, i) => {
+  const el = document.createElement('div');
+  el.style.cssText = `position:fixed;font-size:${18+Math.random()*18}px;left:${Math.random()*100}%;animation:floatUp ${5+Math.random()*6}s ${i*1.2}s linear infinite;pointer-events:none;z-index:0;`;
+  el.textContent = e; document.body.appendChild(el);
+});
+</script>
+</body>
+</html>
