@@ -1,281 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cloud Infrastructure | High Severity Alert</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0f1115; --surface: #1a1d24; --border: #2d3139;
-      --text-main: #d1d5db; --text-muted: #9ca3af;
-      --red: #ef4444; --red-bg: rgba(239, 68, 68, 0.1);
-      --green: #10b981; --blue: #3b82f6; --warning: #f59e0b;
-      --font-ui: 'Inter', sans-serif;
-      --font-mono: 'Fira Code', monospace;
+    /* Reset and Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
+    
     body {
-      font-family: var(--font-ui);
-      background-color: var(--bg);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-    }
-    
-    /* Enterprise Grid Background */
-    body::before {
-      content: ''; position: fixed; inset: 0; pointer-events: none;
-      background-image: linear-gradient(var(--border) 1px, transparent 1px),
-                        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 60px 60px; opacity: 0.15; z-index: 0;
+      background-color: #050505; /* Deep dark background */
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      overflow: hidden;
     }
 
+    /* Screen Management */
     .screen {
-      display: none; flex-direction: column;
-      width: 100%; max-width: 520px;
-      padding: 32px; position: relative; z-index: 10;
-      animation: fadeIn 0.2s ease-out forwards;
-    }
-    .screen.active { display: flex; }
-    @keyframes fadeIn { from { opacity:0; transform: translateY(5px); } to { opacity:1; transform: translateY(0); } }
-
-    .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 6px; padding: 32px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
 
-    /* Typography & Icons */
-    h1 { font-size: 20px; font-weight: 600; margin-bottom: 8px; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
-    .icon { width: 24px; height: 24px; flex-shrink: 0; }
-    .icon-red { stroke: var(--red); }
-    .icon-blue { stroke: var(--blue); }
-    
-    .subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
-    code { font-family: var(--font-mono); background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: var(--text-main); }
-
-    /* Alert Box */
-    .billing-alert {
-      background: var(--red-bg); border-left: 4px solid var(--red);
-      padding: 20px; margin-bottom: 24px; border-radius: 0 4px 4px 0;
+    .screen.active {
+      display: flex;
     }
-    .billing-alert .amount { font-family: var(--font-mono); font-size: 36px; font-weight: 700; color: var(--red); margin: 8px 0; letter-spacing: -1px; }
-    .billing-alert p { font-size: 13px; color: var(--text-main); font-weight: 500; }
 
-    /* Buttons */
-    .btn {
-      width: 100%; background: var(--surface); border: 1px solid var(--border);
-      color: var(--text-main); font-family: var(--font-ui);
-      font-size: 14px; font-weight: 500; padding: 12px 16px; border-radius: 4px;
-      cursor: pointer; transition: all 0.15s; display: flex; justify-content: center; align-items: center; gap: 8px;
+    /* Button Styles */
+    button {
+      background: transparent;
+      border: 1px solid #ffffff;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 16px;
+      letter-spacing: 1px;
+      transition: all 0.2s ease;
     }
-    .btn-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
-    .btn-primary:hover { background: #2563eb; }
-    .btn-danger { background: var(--red); color: #fff; border-color: var(--red); }
-    .btn-danger:hover { background: #dc2626; }
-    .btn-outline:hover { background: rgba(255,255,255,0.05); }
-    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Forms */
-    .field { margin-bottom: 20px; text-align: left; }
-    .field label { font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 8px; }
-    .field input {
-      width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border);
-      border-radius: 4px; color: var(--text-main); font-family: var(--font-mono);
-      font-size: 14px; padding: 12px; outline: none; transition: border-color 0.2s;
+    button:hover {
+      background: #ffffff;
+      color: #050505;
     }
-    .field input:focus { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
 
-    /* Terminal Screen */
-    .terminal {
-      background: #090a0c; border: 1px solid var(--border); border-radius: 4px;
-      padding: 16px; font-family: var(--font-mono); font-size: 12px;
-      color: var(--text-main); height: 280px; overflow-y: auto; text-align: left;
+    /* Square Button (Screen 1) */
+    .square-btn {
+      width: 120px;
+      height: 120px;
+      text-transform: lowercase;
     }
-    .terminal p { margin-bottom: 6px; opacity: 0; animation: blinkIn 0.05s forwards; line-height: 1.4; }
-    .terminal .ts { color: var(--text-muted); margin-right: 8px; user-select: none; }
-    .terminal .warn { color: var(--warning); }
-    .terminal .err { color: var(--red); }
-    .terminal .success { color: var(--green); }
-    @keyframes blinkIn { to { opacity: 1; } }
 
-    /* Loader */
-    .spinner {
-      width: 16px; height: 16px; border: 2px solid transparent;
-      border-top-color: currentColor; border-radius: 50%;
-      animation: spin 0.8s linear infinite; display: none;
+    /* Rectangle Buttons (Screen 2) */
+    .btn-container {
+      display: flex;
+      gap: 30px; /* Space between the two buttons */
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Reveal */
-    .reveal-box { background: rgba(59, 130, 246, 0.1); border: 1px solid var(--blue); padding: 24px; border-radius: 4px; font-family: var(--font-mono); font-size: 13px; color: var(--blue); line-height: 1.6; }
+    .rect-btn {
+      width: 160px;
+      height: 50px;
+      text-transform: capitalize;
+    }
   </style>
 </head>
 <body>
 
-<div class="screen active" id="screen-1">
-  <div class="card">
-    <h1 style="color: var(--red);">
-      <svg class="icon icon-red" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-      Critical Billing Alert
-    </h1>
-    <p class="subtitle">Automated monitoring has detected anomalous outbound traffic on instance <code>prod-db-cluster-01</code>. Configured budget thresholds have been exceeded.</p>
-    
-    <div class="billing-alert">
-      <p>Current Unbilled Usage:</p>
-      <div class="amount">$8,409.32</div>
-      <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">Service suspension scheduled in 01:14:59</p>
+  <div id="screen-1" class="screen active">
+    <button class="square-btn" onclick="nextScreen(2)">click</button>
+  </div>
+
+  <div id="screen-2" class="screen">
+    <div class="btn-container">
+      <button class="rect-btn" onclick="nextScreen(3)">Male</button>
+      <button class="rect-btn" onclick="nextScreen(3)">Female</button>
+    </div>
+  </div>
+
+  <div id="screen-3" class="screen">
     </div>
 
-    <button class="btn btn-danger" onclick="goScreen(2)">Investigate Incident</button>
-  </div>
-</div>
-
-<div class="screen" id="screen-2">
-  <div class="card">
-    <h1>
-      <svg class="icon icon-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-      Identity Verification
-    </h1>
-    <p class="subtitle">Authenticate via Single Sign-On (SSO) to access isolated environment logs.</p>
-    
-    <div class="field">
-      <label>IAM User Alias / Email</label>
-      <input type="text" id="victim-name" placeholder="admin@domain.com" autocomplete="off"/>
-    </div>
-    
-    <button class="btn btn-primary" id="btn-login" onclick="processLogin()">
-      <div class="spinner" id="spin-login"></div>
-      <span id="text-login">Continue</span>
-    </button>
-  </div>
-</div>
-
-<div class="screen" id="screen-3">
-  <div class="card">
-    <h1>
-      <svg class="icon icon-blue" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-      Multi-Factor Authentication
-    </h1>
-    <p class="subtitle">Enter the 6-digit code from your authenticator app to authorize SSH access.</p>
-    
-    <div class="field">
-      <label>MFA Token</label>
-      <input type="text" id="mfa-token" placeholder="000000" maxlength="6" autocomplete="off" style="letter-spacing: 4px; text-align: center; font-size: 18px;"/>
-    </div>
-    
-    <button class="btn btn-primary" id="btn-mfa" onclick="processMFA()">
-      <div class="spinner" id="spin-mfa"></div>
-      <span id="text-mfa">Verify & Connect</span>
-    </button>
-  </div>
-</div>
-
-<div class="screen" id="screen-4" style="max-width: 700px;">
-  <div class="card" style="padding: 16px;">
-    <div class="terminal" id="terminal-output"></div>
-  </div>
-</div>
-
-<div class="screen" id="screen-5">
-  <div class="card">
-    <div class="reveal-box">
-      <span style="color: var(--text-main);">HTTP/2 418 I'm a teapot</span><br><br>
-      {<br>
-      &nbsp;&nbsp;"error": "java.lang.PrankException",<br>
-      &nbsp;&nbsp;"target": "<span id="reveal-name" style="color: var(--warning);">User</span>",<br>
-      &nbsp;&nbsp;"message": "Security protocol failure. You authenticated into a dummy domain.",<br>
-      &nbsp;&nbsp;"billing_status": "There is no $8,400 bill.",<br>
-      &nbsp;&nbsp;"advice": "Check your URLs before handing over your IAM alias."<br>
-      }
-    </div>
-    <button class="btn btn-outline" style="margin-top: 24px;" onclick="location.reload()">Acknowledge Defeat</button>
-  </div>
-</div>
-
-<script>
-let userName = "Admin";
-
-function goScreen(n) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-'+n).classList.add('active');
-}
-
-function processLogin() {
-  const input = document.getElementById('victim-name').value.trim();
-  if(!input) return;
-  userName = input.split('@')[0]; 
-  
-  const btn = document.getElementById('btn-login');
-  document.getElementById('text-login').style.display = 'none';
-  document.getElementById('spin-login').style.display = 'block';
-  btn.disabled = true;
-
-  setTimeout(() => {
-    goScreen(3);
-  }, 1200);
-}
-
-function processMFA() {
-  const input = document.getElementById('mfa-token').value.trim();
-  if(input.length < 6) return; // Force them to type 6 characters
-
-  const btn = document.getElementById('btn-mfa');
-  document.getElementById('text-mfa').style.display = 'none';
-  document.getElementById('spin-mfa').style.display = 'block';
-  btn.disabled = true;
-
-  setTimeout(() => {
-    goScreen(4);
-    startTerminal();
-  }, 1500);
-}
-
-function getTimestamp() {
-  const now = new Date();
-  return now.toISOString().split('T')[1].slice(0, -1); 
-}
-
-function startTerminal() {
-  const terminal = document.getElementById('terminal-output');
-  terminal.innerHTML = '';
-  
-  const logs = [
-    `Establishing secure tunnel for IAM user: ${userName}...`,
-    `<span class="success">[OK]</span> Handshake successful. Cipher: TLS_AES_256_GCM_SHA384`,
-    `Executing: ssh -i ~/.ssh/aws_prod_key ${userName}@prod-db-cluster-01`,
-    `<span class="success">[OK]</span> Connection established. IP: 192.168.1.104`,
-    `Fetching VPC egress logs...`,
-    `Analyzing packet metadata...`,
-    `<span class="warn">[WARN] Anomalous traffic spike detected on port 443.</span>`,
-    `Tracing destination IP headers...`,
-    `Resolving ASN routing tables...`,
-    `<span class="err">[ERR] FATAL: Buffer overflow in log parser. Cannot display secure logs.</span>`,
-    `Attempting to dump kernel panic stack trace...`,
-    `Terminating SSH session in 3... 2... 1...`
-  ];
-
-  let i = 0;
-  function printLine() {
-    if (i < logs.length) {
-      const p = document.createElement('p');
-      p.innerHTML = `<span class="ts">[${getTimestamp()}]</span> ${logs[i]}`;
-      terminal.appendChild(p);
-      terminal.scrollTop = terminal.scrollHeight;
-      i++;
-      setTimeout(printLine, Math.random() * 600 + 300); 
-    } else {
-      setTimeout(() => {
-        document.getElementById('reveal-name').textContent = userName;
-        goScreen(5);
-      }, 1200);
+  <script>
+    // Logic to switch between screens
+    function nextScreen(screenNumber) {
+      // Hide all screens
+      document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+      });
+      // Show the targeted screen
+      document.getElementById('screen-' + screenNumber).classList.add('active');
     }
-  }
-  setTimeout(printLine, 800);
-}
-</script>
+  </script>
+
 </body>
 </html>
