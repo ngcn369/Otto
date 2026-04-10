@@ -1,102 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Setup</title>
-  <style>
-    /* Reset and Base Styles */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    
-    body {
-      background-color: #050505; /* Deep dark background */
-      color: #ffffff;
-      font-family: 'Inter', sans-serif;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* Screen Management */
-    .screen {
-      display: none;
-      width: 100vw;
-      height: 100vh;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .screen.active {
-      display: flex;
-    }
-
-    /* Button Styles */
-    button {
-      background: transparent;
-      border: 1px solid #ffffff;
-      color: #ffffff;
-      cursor: pointer;
-      font-size: 16px;
-      letter-spacing: 1px;
-      transition: all 0.2s ease;
-    }
-
-    button:hover {
-      background: #ffffff;
-      color: #050505;
-    }
-
-    /* Square Button (Screen 1) */
-    .square-btn {
-      width: 120px;
-      height: 120px;
-      text-transform: lowercase;
-    }
-
-    /* Rectangle Buttons (Screen 2) */
-    .btn-container {
-      display: flex;
-      gap: 30px; /* Space between the two buttons */
-    }
-
-    .rect-btn {
-      width: 160px;
-      height: 50px;
-      text-transform: capitalize;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Terminal</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+        #console {
+            max-width: 900px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+        .glow {
+            text-shadow: 0 0 5px #00ff00;
+        }
+        .output {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .command-line {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .prompt {
+            margin-right: 10px;
+            color: #00ff00;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            background: transparent;
+            border: none;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            outline: none;
+            flex-grow: 1;
+            text-shadow: 0 0 2px #00ff00;
+        }
+        /* Make sure the input cursor is always visible */
+        input:focus {
+            outline: none;
+        }
+    </style>
 </head>
 <body>
-
-  <div id="screen-1" class="screen active">
-    <button class="square-btn" onclick="nextScreen(2)">click</button>
-  </div>
-
-  <div id="screen-2" class="screen">
-    <div class="btn-container">
-      <button class="rect-btn" onclick="nextScreen(3)">Male</button>
-      <button class="rect-btn" onclick="nextScreen(3)">Female</button>
+    <div id="console">
+        <div class="output glow">
+            SYSTEM BOOT SEQUENCE INITIATED...<br>
+            ESTABLISHING SECURE CONNECTION... SUCCESS.<br>
+            UNAUTHORIZED ACCESS IS STRICTLY MONITORED.
+        </div>
+        <div class="output">
+            Welcome to the mainframe. Type <strong>'help'</strong> to see available commands.
+        </div>
+        <div id="history"></div>
+        <div class="command-line">
+            <span class="prompt">guest@system:~$</span>
+            <input type="text" id="commandInput" autocomplete="off" spellcheck="false" autofocus>
+        </div>
     </div>
-  </div>
 
-  <div id="screen-3" class="screen">
-    </div>
+    <script>
+        const input = document.getElementById('commandInput');
+        const history = document.getElementById('history');
 
-  <script>
-    // Logic to switch between screens
-    function nextScreen(screenNumber) {
-      // Hide all screens
-      document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
-      });
-      // Show the targeted screen
-      document.getElementById('screen-' + screenNumber).classList.add('active');
-    }
-  </script>
+        // Always keep focus on the input so they can type immediately
+        document.addEventListener('click', () => input.focus());
 
+        input.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const cmd = input.value.trim().toLowerCase();
+                let response = '';
+
+                // The logic for the commands
+                switch(cmd) {
+                    case 'help':
+                        response = 'Available commands: <br> - <strong>whoami</strong>: Identify the system admin <br> - <strong>skills</strong>: View technical loadout <br> - <strong>sudo</strong>: Attempt privilege escalation <br> - <strong>clear</strong>: Wipe terminal history';
+                        break;
+                    case 'whoami':
+                        response = 'I am the architect of this simulation. You are merely a guest traversing my code.';
+                        break;
+                    case 'skills':
+                        response = '>> LOADED MODULES: [HTML5, CSS3, Vanilla JS, UI/UX Deception, System Architecture]';
+                        break;
+                    case 'sudo':
+                    case 'sudo su':
+                        response = '<span style="color: red; text-shadow: 0 0 5px red;">ACCESS DENIED. This incident has been logged and reported to the system administrator.</span>';
+                        break;
+                    case 'clear':
+                        history.innerHTML = '';
+                        input.value = '';
+                        return;
+                    case '':
+                        break; // Do nothing if they just hit enter
+                    default:
+                        response = `Command not found: ${cmd}. Type 'help' for a list of commands.`;
+                }
+
+                // Print the typed command to the history
+                if (cmd !== '') {
+                    history.innerHTML += `<div><span class="prompt">guest@system:~$</span> ${input.value}</div>`;
+                    history.innerHTML += `<div class="output">${response}</div>`;
+                }
+                
+                // Clear the input and scroll to the bottom
+                input.value = '';
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        });
+    </script>
 </body>
 </html>
